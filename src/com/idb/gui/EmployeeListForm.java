@@ -143,8 +143,10 @@ public class EmployeeListForm extends javax.swing.JFrame {
         e.setAge(Integer.valueOf(employeeTable.getValueAt(selectedRow, 2).toString()));
         e.setCourse(employeeTable.getValueAt(selectedRow, 3).toString());
         e.setSalary(Double.valueOf(employeeTable.getValueAt(selectedRow, 4).toString()));
+        
         EditEmployeeForm editEmp = new EditEmployeeForm();
         editEmp.EditData(e);
+        
         editEmp.setVisible(true);
     }//GEN-LAST:event_btnEditActionPerformed
 
