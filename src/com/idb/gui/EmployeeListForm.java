@@ -8,6 +8,7 @@ package com.idb.gui;
 import com.idb.dao.EmployeeDAO;
 import com.idb.model.Employee;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -18,13 +19,15 @@ import javax.swing.table.TableModel;
 public class EmployeeListForm extends javax.swing.JFrame {
 
     EmployeeDAO employeeDAO;
+    DefaultTableModel model;
+
     /**
      * Creates new form EmployeeForm
      */
     public EmployeeListForm() {
         initComponents();
         employeeDAO = new EmployeeDAO();
-       
+        getAll();
     }
 
     /**
@@ -40,6 +43,8 @@ public class EmployeeListForm extends javax.swing.JFrame {
         btnGetAll = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         employeeTable = new javax.swing.JTable();
+        btnEdit = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
@@ -74,28 +79,52 @@ public class EmployeeListForm extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(employeeTable);
 
+        btnEdit.setText("Edit");
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
+
+        btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(247, 247, 247)
+                .addComponent(btnGetAll)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(58, 58, 58)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(222, 222, 222)
-                        .addComponent(btnGetAll))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(72, 72, 72)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(126, Short.MAX_VALUE))
+                    .addComponent(btnEdit)
+                    .addComponent(btnDelete))
+                .addGap(35, 35, 35))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
+                .addGap(73, 73, 73)
                 .addComponent(btnGetAll)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 527, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(65, 65, 65)
+                        .addComponent(btnEdit)
+                        .addGap(30, 30, 30)
+                        .addComponent(btnDelete)))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
 
         pack();
@@ -105,26 +134,51 @@ public class EmployeeListForm extends javax.swing.JFrame {
         getAll();
     }//GEN-LAST:event_btnGetAllActionPerformed
 
-    private void getAll(){
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = employeeTable.getSelectedRow();
+        Employee e = new Employee();
+        e.setId(Integer.valueOf(employeeTable.getValueAt(selectedRow, 0).toString()));
+        e.setName(employeeTable.getValueAt(selectedRow, 1).toString());
+        e.setAge(Integer.valueOf(employeeTable.getValueAt(selectedRow, 2).toString()));
+        e.setCourse(employeeTable.getValueAt(selectedRow, 3).toString());
+        e.setSalary(Double.valueOf(employeeTable.getValueAt(selectedRow, 4).toString()));
+        EditEmployeeForm editEmp = new EditEmployeeForm();
+        editEmp.EditData(e);
+        editEmp.setVisible(true);
+    }//GEN-LAST:event_btnEditActionPerformed
 
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+         int selectedRow = employeeTable.getSelectedRow();
+         int empID = Integer.valueOf(employeeTable.getValueAt(selectedRow, 0).toString());
+         int status = JOptionPane.showConfirmDialog(rootPane, "Do you want to delete?");
+         System.out.println(status);
+         int deleteStatus = 0;
+         if(status == 0){
+             deleteStatus = employeeDAO.delete(empID);
+         }
+        if (deleteStatus > 0) {
+            JOptionPane.showMessageDialog(rootPane, "Employee Deleted!");
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Employee NOT deleted!");
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void getAll() {
         List<Employee> empList = employeeDAO.getAll();
-        
-        
-        String[] columns = {"Name", "Age", "Gender", "Course", "Salary"};
+        String[] columns = {"Id", "Name", "Age", "Course", "Salary"};
         String[][] rows = new String[empList.size()][columns.length];
-        
-        
         for (int i = 0; i < empList.size(); i++) {
-            rows[i][0] = empList.get(i).getName();
-            rows[i][1] = String.valueOf(empList.get(i).getAge());
-            rows[i][2] = empList.get(i).getCourse();
+            rows[i][0] = String.valueOf(empList.get(i).getId());
+            rows[i][1] = empList.get(i).getName();
+            rows[i][2] = String.valueOf(empList.get(i).getAge());
             rows[i][3] = empList.get(i).getCourse();
             rows[i][4] = String.valueOf(empList.get(i).getSalary());
         }
-       DefaultTableModel dtbl = new DefaultTableModel(rows, columns);
-       employeeTable.setModel(dtbl);
-     
+        model = new DefaultTableModel(rows, columns);
+        employeeTable.setModel(model);
     }
+
     /**
      * @param args the command line arguments
      */
@@ -161,6 +215,8 @@ public class EmployeeListForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnGetAll;
     private javax.swing.JTable employeeTable;
     private javax.swing.JDesktopPane jDesktopPane1;
