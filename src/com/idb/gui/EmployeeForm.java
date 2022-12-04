@@ -7,7 +7,6 @@ package com.idb.gui;
 
 import com.idb.dao.EmployeeDAO;
 import com.idb.model.Employee;
-import com.idb.r52.*;
 import com.swing.util.DBCon;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
